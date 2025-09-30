@@ -15,3 +15,15 @@
 4 -- Pull docker image from hub and run on local
   docker pull yajukumar/fastapi-app:latest
   docker run -d --name fastapi_app -p 8000:8000 yajukumar/fastapi-app:latest
+
+5--
+remove old image and run new one
+# Stop & remove old containers if they exist
+docker rm -f fastapi_app redis_cache 2>/dev/null || true
+
+# Run Redis
+docker run -d --name redis_cache -p 6379:6379 redis:7
+
+# Run FastAPI container linked to Redis
+docker run -d --name fastapi_app --link redis_cache:redis -p 8000:8000 yajukumar/fastapi-app:latest
+
