@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    container_name: fast_api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - redis
+
+  redis: 
+    image: redis:7
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+
+  test:
+    build: .
+    container_name: fast_api_tests
+    command: pytest -v
+    volumes:
+      - ./app:/app
+      - ./tests:/tests
+    depends_on:
+      - redis
